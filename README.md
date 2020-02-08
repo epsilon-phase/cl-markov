@@ -1,9 +1,10 @@
 # cl-markov
 ### _Violet White <violet.white.dammit@protonmail.com>_
 
-This is a project to do ... something.
+This is a piece of software to enable the creation of markov-automata with
+relative ease.
 
 ## License
 
-Specify license here
+GPLv3
 
