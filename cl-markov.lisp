@@ -17,6 +17,7 @@
     ))
 
 (defun fill-table(table sequence)
+  (when (markov-finished table) (unfinish-table table))
   (reduce (filler table)
           (prepare-sequence sequence)
           :initial-value (make-initial-state (markov-degree table))))
@@ -48,10 +49,23 @@
         do(setf (gethash state finished) (entries-to-array value))
         finally(setf (markov-table table) finished
                      (markov-finished table) t)))
+(defun unfinish-table(table)
+  (when (markov-finished table)
+    (loop with unfinished = (make-hash-table :test 'equal)
+          for state being the hash-keys of (markov-table table)
+            using (hash-value array)
+          do(setf (gethash state unfinished) (array-to-entries array))
+          finally (progn
+                    (setf (markov-table table) unfinished
+                          (markov-finished table) nil)
+                    table)
+          )))
 
 (defun shuffle-array(array)
-  (loop for i from 0 below (array-dimension array 0)
-        for j = (random i)
+  (declare (type (array * (*)) array)
+           (optimize (speed 2)))
+  (loop for i fixnum from 0 below (array-dimension array 0)
+        for j fixnum = (random i)
         do(psetf (aref array i)
                  (aref array j)
                  (aref array j)
