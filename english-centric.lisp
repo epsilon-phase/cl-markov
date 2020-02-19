@@ -1,25 +1,24 @@
 (in-package #:cl-markov/english)
-(import '(split-sequence:split-sequence))
 
-(defun whitespacep(c)
-  (or (char= #\space c)
-      (char= #\tab c)
-      (char= #\newline c)))
-(defun punctuationp(c)
-  "Test for sentence ends. Primitive and creppy"
-  (or (char= #\? c)
-      (char= #\. c)
-      (char= #\! c)))
+(flet ((c= (char &rest compare)
+	   (loop for c in compare
+		 if (char= char (coerce c 'character))
+		   return t)))
+  (defun punctuationp(c)
+    "Test for sentence ends"
+    (c= c "!" "." "?")))
 
 (defun split-sentences(str)
-  (split-sequence:split-sequence-if #'punctuationp str :remove-empty-subseqs t))
+  (mapcar #'str:trim
+	  (split-sequence-if #'punctuationp str :remove-empty-subseqs t)))
+
 (defun split-words(str)
-  (split-sequence:split-sequence-if #'whitespacep str :remove-empty-subseqs t))
+  (str:words str))
                                         ;Too lazy to use a real testing framework
                                         ;for this
-(let ((test "Hello there good friend. How are you?"))
-  (assert (equalp (split-sentences test)
-                  '("Hello there good friend" " How are you"))))
+(let ((test "Hello there good friend. How are you?")
+      (result '("Hello there good friend" "How are you")))
+  (assert (equalp (split-sentences test) result)))
 (let ((test "Hello there friend")
       (result '("Hello" "there" "friend")))
   (assert (equal (split-words test) result)))
@@ -28,7 +27,6 @@
   "Build a model, roughly suitable for english"
   (let ((mt (if markov markov (make-markov :degree degree))))
     (loop for sentence in (split-sentences (string-downcase text))
-          do(fill-table mt (split-words sentence)))
-    mt
-    ))
+          do(fill-table mt (split-words sentence))
+	  finally (return mt))))
 (export '(build-model))

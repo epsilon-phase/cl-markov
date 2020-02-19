@@ -6,7 +6,7 @@
   :license  "Specify license here"
   :version "0.0.1"
   :serial t
-  :depends-on (#:glacier #:split-sequence)
+  :depends-on (#:glacier #:str #:split-sequence)
   :components ((:file "package")
                (:file "cl-markov")
 	       (:file "english-centric")))
