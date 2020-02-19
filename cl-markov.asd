@@ -8,4 +8,6 @@
   :serial t
   :depends-on (#:glacier #:split-sequence)
   :components ((:file "package")
-               (:file "cl-markov")))
+               (:file "cl-markov")
+	       (:file "english-centric"))
+  :in-order-to ((test-op (test-op "cl-markov-test"))))
