@@ -15,14 +15,6 @@
   (split-sequence:split-sequence-if #'punctuationp str :remove-empty-subseqs t))
 (defun split-words(str)
   (split-sequence:split-sequence-if #'whitespacep str :remove-empty-subseqs t))
-                                        ;Too lazy to use a real testing framework
-                                        ;for this
-(let ((test "Hello there good friend. How are you?"))
-  (assert (equalp (split-sentences test)
-                  '("Hello there good friend" " How are you"))))
-(let ((test "Hello there friend")
-      (result '("Hello" "there" "friend")))
-  (assert (equal (split-words test) result)))
 
 (defun build-model(text &key (degree 1) (markov nil))
   "Build a model, roughly suitable for english"
